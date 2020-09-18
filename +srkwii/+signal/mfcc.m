@@ -51,7 +51,7 @@ N = parser.Results.FilterOrder;
 spec = abs(fft([input; zeros(parser.Results.FFTLength - l, size(input, 2))]));
 spec = spec(1:L, :);
 
-mel_list = linspace(0, hz2mel(parser.Results.SamplingRate / 2), N + 2);
+mel_list = linspace(0, srkwii.signal.hz2mel(parser.Results.SamplingRate / 2), N + 2);
 filters = cell2mat(arrayfun(@(n) make_filter(mel_list(n:n+2), L, parser.Results.SamplingRate), 1:N, 'un', 0));
 filtered = reshape(sum(reshape(spec, L, 1, []) .* filters), N, []);
 mfccs = dct(log(max(parser.Results.EnergyFloor, filtered)));
@@ -66,11 +66,7 @@ if lifter > 0
 
 
 function output = make_filter(points, L, fs)
-mel = hz2mel(linspace(0, fs/2, L)');
+mel = srkwii.signal.hz2mel(linspace(0, fs/2, L)');
 output = zeros(L, 1);
 output(points(1) <= mel & mel <= points(2)) = (mel(points(1) <= mel & mel <= points(2)) - points(1)) / (points(2) - points(1));
 output(points(2) <= mel & mel <= points(3)) = (points(3) - mel(points(2) <= mel & mel <= points(3))) / (points(3) - points(2));
-
-
-function mel = hz2mel(hz)
-mel = 1127.01048 * log(hz / 700 + 1);

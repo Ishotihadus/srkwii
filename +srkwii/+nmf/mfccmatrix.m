@@ -25,7 +25,7 @@ K = parser.Results.Order;
 L = parser.Results.FFTSize / 2 + 1;
 fs = parser.Results.SamplingRate;
 
-mel_axis = hz2mel(linspace(0, fs / 2, L));
+mel_axis = srkwii.signal.hz2mel(linspace(0, fs / 2, L));
 interval = mel_axis(end) / (N + 1);
 fbmatrix = 1 - abs(mel_axis / interval - (1:N)');
 fbmatrix(fbmatrix < 0) = 0;
@@ -33,7 +33,3 @@ if parser.Results.OmitPower
   fbmatrix = fbmatrix(:, 2:end); end
 
 dctmatrix = sqrt(2 / N) * cos((pi / N) * ((1:N) - 0.5) .* (1:K)');
-
-
-function mel = hz2mel(hz)
-mel = 1127.01048 * log(hz / 700 + 1);
