@@ -61,6 +61,7 @@ addParameter(parser, 'ConstantBaseAvail', @(~) true);
 addParameter(parser, 'ConstantActivationAvail', @(~) true);
 addParameter(parser, 'Iteration', 100, @isscalar);
 addParameter(parser, 'NormalizeBase', 1, @isscalar);
+addParameter(parser, 'CepstralNormalize', false, @isscalar);
 addParameter(parser, 'Divergence', 'kl');
 addParameter(parser, 'SparseKLBaseAlpha', 0);
 addParameter(parser, 'SparseKLActivationAlpha', 0);
@@ -404,6 +405,14 @@ if print_log > 0
   fprintf('\n');
 end
 
+if parser.Results.CepstralNormalize
+  d.y_cep = d.y;
+  logdy = log(d.y);
+  c0 = mean(gather(logdy), 1);
+  d.y = exp(logdy - c0);
+  d.u = d.u ./ exp(c0);
+end
+
 
 d.x = d.h * d.u;
 d.iter = 0;
@@ -502,6 +511,17 @@ if iter_print_log
   fprintf('final: %s\n', diststr(d, true)); end
 if save_history
   history(end + 1) = copy_hist(d); end
+
+if parser.Results.CepstralNormalize
+  logdx = log(d.x);
+  c0 = c0 - mean(gather(logdx), 1);
+  d.x = exp(logdx + c0);
+  d.u = d.u .* exp(c0);
+  d.y = d.y_cep;
+
+  if iter_print_log
+    fprintf('cepfin:%s\n', diststr(d, true)); end
+end
 
 h = d.h;
 u = d.u;
