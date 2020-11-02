@@ -19,7 +19,7 @@ parser.addOptional('Gamma', 0, @(a) isscalar(a) && -1 <= a && a <= 0);
 parser.addOptional('NormalizedInput', false, @isscalar);
 parser.addOptional('MultipliedInput', false, @isscalar);
 parser.addOptional('FFTLength', 256, @(a) isscalar(a) && a == 2 ^ nextpow2(a));
-parser.addOptional('OutputFormat', 'ln')
+parser.addOptional('OutputFormat', 'ln');
 parser.addOptional('Parallel', false, @isscalar);
 parser.parse(input, varargin{:});
 
